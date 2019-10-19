@@ -1,5 +1,5 @@
 # cs224w
-Project repo for cs224w: Detecting hateful users on Twitter  
+Project repo for Stanford CS224w: Detecting hateful users on Twitter  
 
 Primary dataset: https://www.kaggle.com/manoelribeiro/hateful-users-on-twitter  
 Dataset owners' analysis repo: https://github.com/manoelhortaribeiro/HatefulUsersTwitter  
