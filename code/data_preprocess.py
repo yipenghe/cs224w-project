@@ -14,7 +14,7 @@ def read_edge_index():
             edge_int.append(np.array(node, dtype=np.int32))
         np_edges = np.array(edge_int)
     return np.transpose(np_edges)
-
+map_label_to_index = {'hateful': 0, 'normal': 1, 'other':2}
 def read_node_glove_feature():
     with open(edge_glove_file) as f:
         feature_line = f.read().splitlines()
@@ -23,7 +23,7 @@ def read_node_glove_feature():
         for feature in feature_line:
             feature = feature.split("\t")
             features.append(np.array(feature[1:-1], dtype=np.float32))
-            y.append(int(feature[0]))
+            y.append(map_label_to_index[feature[-1]])
         return np.array(y), np.array(features)
 
 class RetweetDataset(InMemoryDataset):
@@ -54,3 +54,4 @@ class RetweetDataset(InMemoryDataset):
         torch.save((data, slices), self.processed_paths[0])
 
 dataset=RetweetDataset("../")
+print(dataset.num_classes)
