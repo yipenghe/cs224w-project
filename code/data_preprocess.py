@@ -2,9 +2,20 @@ import torch
 import torch_geometric
 from torch_geometric.data import Data, Dataset, InMemoryDataset
 import numpy as np
+import argparse
+
+
+parser = argparse.ArgumentParser()
+
+# system
+parser.add_argument("--feature", type=str, default="glove", help="glove | all")
+#no use of user_type for now
+parser.add_argument("--user_type", type=str, default="hate", help="hate | suspend")
+args = parser.parse_args()
 
 egde_index_file = '../data/users.edges'
-edge_glove_file = '../data/users_hate_glove.content'
+edge_feature_file = '../data/users_' + args.user_type + '_' + args.feature +'.content'
+
 def read_edge_index():
     with open(egde_index_file) as f:
         edges_str = f.read().splitlines()
@@ -15,8 +26,8 @@ def read_edge_index():
         np_edges = np.array(edge_int)
     return np.transpose(np_edges)
 map_label_to_index = {'hateful': 0, 'normal': 1, 'other':2}
-def read_node_glove_feature():
-    with open(edge_glove_file) as f:
+def read_node_feature_file():
+    with open(edge_feature_file) as f:
         feature_line = f.read().splitlines()
         features = []
         y = []
@@ -27,16 +38,17 @@ def read_node_glove_feature():
         return np.array(y), np.array(features)
 
 class RetweetDataset(InMemoryDataset):
-    def __init__(self, root_path, transform=None, pre_transform=None):
+    def __init__(self, root_path, transform=None, pre_transform=None, feature_type='glove'):
         super(RetweetDataset, self).__init__(root_path, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        data_index = 0 if feature_type == 'glove' else 1
+        self.data, self.slices = torch.load(self.processed_paths[data_index])
 
     @property
     def raw_file_names(self):
         return []
     @property
     def processed_file_names(self):
-        return ['../data/input/processed_glove_data.dataset']
+        return ['../data/input/processed_hate_glove_data.dataset', '../data/input/processed_hate_all_data.dataset']
     
     def download(self):
         pass
@@ -45,13 +57,19 @@ class RetweetDataset(InMemoryDataset):
         #size: (2, E)
         np_edge_index = read_edge_index()
         #size (num_node, 1) (num_node, feature vector size)
-        y, np_node_features = read_node_glove_feature()
+        datalist = []
+        y, np_node_features = read_node_feature_file()
         torch_edge_index = torch.tensor(np_edge_index, dtype=torch.long)
         torch_node_features = torch.LongTensor(np_node_features)
         torch_y = torch.FloatTensor(y)
         data_list = [Data(x=torch_node_features, edge = torch_edge_index, y=torch_y)]
         data, slices = self.collate(data_list)
-        torch.save((data, slices), self.processed_paths[0])
+        index = 0 if args.feature == 'glove' else 1
+        torch.save((data, slices), self.processed_paths[index])
 
-dataset=RetweetDataset("../")
-print(dataset.num_classes)
+def construct_dataset(feature='glove'):
+    return RetweetDataset("../", feature_type=feature)
+
+if __name__ == "main":
+    #process & create the dataset files
+    RetweetDataset("../", feature_type=args.feature)
