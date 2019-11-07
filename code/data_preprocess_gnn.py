@@ -59,10 +59,10 @@ class RetweetDataset(InMemoryDataset):
         #size (num_node, 1) (num_node, feature vector size)
         datalist = []
         y, np_node_features = read_node_feature_file()
-        torch_edge_index = torch.tensor(np_edge_index, dtype=torch.long)
-        torch_node_features = torch.LongTensor(np_node_features)
-        torch_y = torch.FloatTensor(y)
-        data_list = [Data(x=torch_node_features, edge = torch_edge_index, y=torch_y)]
+        torch_edge_index = torch.LongTensor(np_edge_index)
+        torch_node_features = torch.FloatTensor(np_node_features)
+        torch_y = torch.LongTensor(y)
+        data_list = [Data(x=torch_node_features, edge_index = torch_edge_index, y=torch_y)]
         data, slices = self.collate(data_list)
         index = 0 if args.feature == 'glove' else 1
         torch.save((data, slices), self.processed_paths[index])
@@ -70,6 +70,23 @@ class RetweetDataset(InMemoryDataset):
 def construct_dataset(feature='glove'):
     return RetweetDataset("../", feature_type=feature)
 
-if __name__ == "main":
+def get_labeled_index():
+    labeled_hate_index = []
+    labeled_normal_index = []
+    with open(edge_feature_file) as f:
+        feature_line = f.read().splitlines()
+
+        for index, feature in enumerate(feature_line):
+            feature = feature.split("\t")
+            if (map_label_to_index[feature[-1]] == 0):
+                labeled_hate_index.append(index)
+            elif (map_label_to_index[feature[-1]] == 1):
+                labeled_normal_index.append(index)
+    return labeled_hate_index, labeled_normal_index
+
+
+
+if __name__ == "__main__":
     #process & create the dataset files
-    RetweetDataset("../", feature_type=args.feature)
+    dataset = RetweetDataset("../", feature_type=args.feature)
+    print(dataset[0].num_nodes)
