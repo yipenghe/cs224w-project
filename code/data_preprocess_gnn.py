@@ -5,16 +5,6 @@ import numpy as np
 import argparse
 
 
-parser = argparse.ArgumentParser()
-
-# system
-parser.add_argument("--feature", type=str, default="glove", help="glove | all")
-#no use of user_type for now
-parser.add_argument("--user_type", type=str, default="hate", help="hate | suspend")
-args = parser.parse_args()
-
-egde_index_file = '../data/users.edges'
-edge_feature_file = '../data/users_' + args.user_type + '_' + args.feature +'.content'
 
 def read_edge_index():
     with open(egde_index_file) as f:
@@ -25,7 +15,7 @@ def read_edge_index():
             edge_int.append(np.array(node, dtype=np.int32))
         np_edges = np.array(edge_int)
     return np.transpose(np_edges)
-map_label_to_index = {'hateful': 0, 'normal': 1, 'other':2}
+map_label_to_index = {'hateful': 2, 'normal': 0, 'other':1}
 def read_node_feature_file():
     with open(edge_feature_file) as f:
         feature_line = f.read().splitlines()
@@ -70,7 +60,8 @@ class RetweetDataset(InMemoryDataset):
 def construct_dataset(feature='glove'):
     return RetweetDataset("../", feature_type=feature)
 
-def get_labeled_index():
+def get_labeled_index(user_type='hate', feature_type='glove'):
+    edge_feature_file = '../data/users_' + user_type + '_' + feature_type +'.content'
     labeled_hate_index = []
     labeled_normal_index = []
     with open(edge_feature_file) as f:
@@ -78,9 +69,9 @@ def get_labeled_index():
 
         for index, feature in enumerate(feature_line):
             feature = feature.split("\t")
-            if (map_label_to_index[feature[-1]] == 0):
+            if (map_label_to_index[feature[-1]] == 2):
                 labeled_hate_index.append(index)
-            elif (map_label_to_index[feature[-1]] == 1):
+            elif (map_label_to_index[feature[-1]] == 0):
                 labeled_normal_index.append(index)
     return labeled_hate_index, labeled_normal_index
 
@@ -88,5 +79,16 @@ def get_labeled_index():
 
 if __name__ == "__main__":
     #process & create the dataset files
+
+    parser = argparse.ArgumentParser()
+
+    # system
+    parser.add_argument("--feature", type=str, default="glove", help="glove | all")
+    #no use of user_type for now
+    parser.add_argument("--user_type", type=str, default="hate", help="hate | suspend")
+    args = parser.parse_args()
+
+    egde_index_file = '../data/users.edges'
+    edge_feature_file = '../data/users_' + args.user_type + '_' + args.feature +'.content'
     dataset = RetweetDataset("../", feature_type=args.feature)
     print(dataset[0].num_nodes)
