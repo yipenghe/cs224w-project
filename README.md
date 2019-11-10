@@ -11,9 +11,15 @@ python data_preprocess_gnn.py --feature all
 ```
 In data/input/, there will be two preprocessed dataset files
 
+## Run graphsage/gat on the retweet graph
+```
+cd code
+python fs_graphsage.py #runs with all feature vector & graphsage model
+python fs_graphsage.py --feature glove #defaults to all features, 320 dimensions
+python fs_graphsage.py --model_type gat #defaults to sage, reproduce graphsage experiment
+```
 
-
-## Dataset
+## Dataset and original files
 Primary dataset: https://www.kaggle.com/manoelribeiro/hateful-users-on-twitter  
 Dataset owners' analysis repo: https://github.com/manoelhortaribeiro/HatefulUsersTwitter  
 Their GraphSAGE embedding repo: https://github.com/manoelhortaribeiro/GraphSageHatefulUsers  
