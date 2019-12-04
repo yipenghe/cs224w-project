@@ -1,4 +1,4 @@
-# cs224w
+# CS224w
 Project repo for Stanford CS224w: Detecting hateful users on Twitter  
 
 ## Preprocess data for pytorch geometric (GNN)
