@@ -23,6 +23,7 @@ python fs_graphsage.py --model_type gat #defaults to sage, reproduce graphsage e
 cd code
 git clone https://github.com/vuptran/graph-representation-learning.git
 python data_preprocess_LoNGAE.py #get preprocessed data
+#Customize model training and metric evaluation
 python train_multitask_lpnc.py hateful <gpu_id>
 ```
 
