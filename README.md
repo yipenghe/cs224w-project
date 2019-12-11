@@ -41,3 +41,10 @@ Their papers:
     Characterizing and Detecting Hateful Users on Twitter
     Manoel Horta Ribeiro, Pedro H Calais, Yuri A Santos,  Virgílio AF Almeida, Wagner Meira Jr
     ICWSM'18
+    
+    GraphMix: Regularized Training of Graph Neural Networks for Semi-Supervised Learning
+    Verma, V., Qu, M., Lamb, A., Bengio, Y., Kannala, J., & Tang, J. (2019). 
+    
+    Learning to make predictions on graphs with autoencoders. 
+    Tran, P. V. (2018, October). 
+    In 2018 IEEE 5th International Conference on Data Science and Advanced Analytics (DSAA) (pp. 237-245). IEEE.
