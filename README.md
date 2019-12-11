@@ -11,12 +11,19 @@ python data_preprocess_gnn.py --feature all
 ```
 In data/input/, there will be two preprocessed dataset files
 
-## Run graphsage/gat on the retweet graph
+## Run GraphSage/GAT on the retweet graph
 ```
 cd code
 python fs_graphsage.py #runs with all feature vector & graphsage model
 python fs_graphsage.py --feature glove #defaults to all features, 320 dimensions
 python fs_graphsage.py --model_type gat #defaults to sage, reproduce graphsage experiment
+```
+## Run LoNGAE on the retweet graph
+```
+cd code
+git clone https://github.com/vuptran/graph-representation-learning.git
+python data_preprocess_LoNGAE.py #get preprocessed data
+python train_multitask_lpnc.py hateful <gpu_id>
 ```
 
 ## Dataset and original files
